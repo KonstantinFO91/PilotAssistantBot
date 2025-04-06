@@ -1,22 +1,21 @@
-from flask import Flask, request
-import telegram
 import os
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-app = Flask(__name__)
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
-bot = telegram.Bot(token=TOKEN)
+# Обработчик команды /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Бот активен и готов к работе!")
 
-@app.route("/")
-def index():
-    return "Bot is running!"
+# Инициализация приложения
+app = ApplicationBuilder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
-@app.route("/webhook", methods=["POST"])
-def respond():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    chat_id = update.message.chat.id
-    text = update.message.text
-    bot.send_message(chat_id=chat_id, text=f"Echo: {text}")
-    return "ok"
+# Добавление обработчика
+app.add_handler(CommandHandler("start", start))
 
-if __name__ == "__main__":
-    app.run(port=5000)
+# Запуск webhook-сервера
+app.run_webhook(
+    listen="0.0.0.0",
+    port=int(os.environ.get("PORT", 10000)),
+    url_path=os.getenv("TELEGRAM_TOKEN"),
+    webhook_url=f"https://pilot-assistant-bot.onrender.com/{os.getenv('TELEGRAM_TOKEN')}"
+)
