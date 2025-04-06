@@ -10,7 +10,7 @@ bot = telegram.Bot(token=TOKEN)
 def index():
     return "Bot is running!"
 
-@app.route(f"/{TOKEN}", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def respond():
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     chat_id = update.message.chat.id
