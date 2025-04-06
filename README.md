@@ -1,2 +1,2 @@
-# PilotAssistantBot
-24/7 Telegram бот-помощник для пилотов, запоминает документы, отвечает на команды
+python-telegram-bot==20.3
+Flask==2.3.2
